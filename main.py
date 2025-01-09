@@ -10,6 +10,10 @@ from tlg import send_chart_via_telegram
 
 app = Flask(__name__)
 
+@app.route('/', methods=['GET'])
+def health_check():
+    return "working", 200
+
 @app.route("/img/<symbol>", methods=["POST"])
 async def process_data(symbol):
     try:
@@ -37,6 +41,7 @@ async def process_signal(symbol):
     try:
         # Directly parse JSON and process data
         json_data = request.get_json()
+        print(json_data)
         init_data(json_data, global_state)
         train(global_state)
         results(global_state)
