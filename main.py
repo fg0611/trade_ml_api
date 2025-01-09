@@ -32,16 +32,15 @@ async def process_data(symbol):
         # Return an error response with a 500 status code
         return jsonify({"success": False, "error": str(e)}), 500
 
-@app.route("/signal", methods=["POST"])
-async def process_signal():
+@app.route("/signal/<symbol>", methods=["POST"])
+async def process_signal(symbol):
     try:
         # Directly parse JSON and process data
         json_data = request.get_json()
         init_data(json_data, global_state)
         train(global_state)
         results(global_state)
-        entry(global_state)
-        return jsonify({"success": True, "result": "señal!"}), 200
+        return jsonify({"success": True, "symbol": symbol, "result": entry(global_state)}), 200
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"success": False, "error": str(e)}), 500

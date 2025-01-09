@@ -10,3 +10,20 @@ def entry(global_st):
     global_st['dfs']['future'] = pd.concat([pd.DataFrame([new_row]), global_st['dfs']['future']], ignore_index=True)
 
     print(global_st['dfs']['future'])
+
+    df = global_st['dfs']['future'].copy()
+    # Calcular la diferencia entre los valores en índice 4 y 0 para cada columna
+    price_differences = df.iloc[4, 1:] - df.iloc[0, 1:]
+
+    # Determinar si suben o bajan
+    price_trends = price_differences.apply(lambda x: "Sube" if x > 0 else "Baja")
+
+    # Verificar si todas las columnas apuntan a la misma dirección o si solo una es diferente
+    if price_trends.nunique() == 1:  # Todas apuntan en la misma dirección
+        final_trend = price_trends.iloc[0]
+    elif price_trends.value_counts().min() == 1:  # Solo una es diferente
+        final_trend = price_trends[price_trends != price_trends.value_counts().idxmax()].iloc[0]
+    else:
+        final_trend = "Indeterminado"  # No cumple ninguna de las dos condiciones
+
+    return final_trend
