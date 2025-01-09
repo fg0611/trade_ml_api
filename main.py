@@ -5,16 +5,13 @@ from init_data import init_data
 from train import train
 from results import results
 from graph import graph
+from entry import entry
 from tlg import send_chart_via_telegram
-
-# from globals_vars import global_state
 
 app = Flask(__name__)
 
-
-@app.route("/process", methods=["POST"])
-async def process_data():
-
+@app.route("/img/<symbol>", methods=["POST"])
+async def process_data(symbol):
     try:
         # Directly parse JSON and process data
         json_data = request.get_json()
@@ -22,23 +19,31 @@ async def process_data():
         train(global_state)
         results(global_state)
         # graph(global_state)
-
-        # Create and send the chart
-        try:
-            await send_chart_via_telegram(graph(global_state), global_state["tlg"]["token"], global_state["tlg"]["chat"])
+        try: # Create and send the chart
+            await send_chart_via_telegram(graph(global_state, symbol), global_state["tlg"]["token"], global_state["tlg"]["chat"])
             print("Chart sent successfully!")
-        finally:
-            # Clean up the chart file
+        finally: # Clean up the chart file
             if os.path.exists(global_state["chart_path"]):
                 os.remove(global_state["chart_path"])
-
         return jsonify({"success": True, "result": "img enviada a telegram!"}), 200
-    
     except Exception as e:
         # Log the error for debugging purposes
         print(f"Error occurred: {e}")
-
         # Return an error response with a 500 status code
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/signal", methods=["POST"])
+async def process_signal():
+    try:
+        # Directly parse JSON and process data
+        json_data = request.get_json()
+        init_data(json_data, global_state)
+        train(global_state)
+        results(global_state)
+        entry(global_state)
+        return jsonify({"success": True, "result": "señal!"}), 200
+    except Exception as e:
+        print(f"Error occurred: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == "__main__":

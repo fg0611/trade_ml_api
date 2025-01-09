@@ -1,10 +1,9 @@
 import matplotlib
 matplotlib.use('Agg')  # Set non-GUI backend before importing pyplot
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
-def graph(global_st):
+def graph(global_st, symbol):
     # Verifica que la columna 'real' exista en predictions_df
     if 'real' not in global_st["dfs"]["trained"].columns:
         real_values = global_st["dfs"]["close"].iloc[-global_st["models"]["lag"]:].values  # Últimos valores reales
@@ -23,7 +22,7 @@ def graph(global_st):
     for col in draw_df.columns[2:]:
         axes[0].plot(draw_df['date'], draw_df[col], label=col.upper(), marker='x')
 
-    axes[0].set_title('Valores Reales vs Predicciones de Modelos')
+    axes[0].set_title(f'Real vs Entrenado ({symbol})')
     axes[0].set_xlabel('Fecha')
     axes[0].set_ylabel('Precio')
     axes[0].legend(title="Modelos")
@@ -49,16 +48,14 @@ def graph(global_st):
     # Crear una nueva fila para insertar
     new_row = {col: last_real if col != 'date' else last_date for col in global_st['dfs']['future'].columns}
     # Insertar como primera fila en el DataFrame destino
-    global_st['dfs']['future'] = pd.concat([pd.DataFrame([new_row]), global_st['dfs']['future']], ignore_index=True)
-
-    
+    global_st['dfs']['future'] = pd.concat([pd.DataFrame([new_row]), global_st['dfs']['future']], ignore_index=True)   
 
     # Graficar los valores predichos para cada modelo
     for col in global_st['dfs']['future'].columns[1:]:  # Excluyendo la columna de fecha
         axes[1].plot(global_st['dfs']['future']['date'], global_st['dfs']['future'][col], label=f'Predicciones {col.upper()}', marker='x')
 
     # Configurar el gráfico
-    axes[1].set_title("Valores Reales y Predicciones")
+    axes[1].set_title(f'Real - Predict ({symbol})')
     axes[1].set_xlabel("Fecha")
     axes[1].set_ylabel("Precio")
     axes[1].legend(title="Modelos")
@@ -70,7 +67,6 @@ def graph(global_st):
 
     # Mostrar la figura combinada
     # plt.show()
-
 
     # Save chart to file
     chart_path = global_st["chart_path"]
