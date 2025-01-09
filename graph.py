@@ -37,9 +37,9 @@ def graph(global_st, symbol):
     # Graficar los valores reales
     axes[1].plot(global_st['dfs']['trained']['date'], global_st['dfs']['trained']['real'], label='Valores Reales', color='black', marker='o')
 
-    print(global_st['dfs']['data'].head(2))
-    print(global_st['dfs']['trained'])
-    print(global_st['dfs']['future'])
+    # print(global_st['dfs']['data'].head(2))
+    # print(global_st['dfs']['trained'])
+    # print(global_st['dfs']['future'])
 
 
     # Obtener el último valor de las columnas 'date' y 'real' del DataFrame origen

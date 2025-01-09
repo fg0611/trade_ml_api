@@ -43,8 +43,8 @@ def results(global_st):
 
     # print("sorted_results")
     # print(sorted_results)
-    print("global_st dfs score")
-    print(global_st["dfs"]["score"])
+    # print("global_st dfs score")
+    # print(global_st["dfs"]["score"])
     # ---------------------------------
     # ---------------------------------
     # PREDICCION DE PRECIOS FUTUROS
@@ -53,7 +53,7 @@ def results(global_st):
 
     # Crear base para el DataFrame
     lag = global_st["models"]["lag"]
-    print(lag)
+    # print(lag)
     data = global_st["dfs"]["data"].copy()
 
     last_prices = data['close'].iloc[-lag:].values

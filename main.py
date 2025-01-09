@@ -29,19 +29,23 @@ async def process_data(symbol):
         finally: # Clean up the chart file
             if os.path.exists(global_state["chart_path"]):
                 os.remove(global_state["chart_path"])
-        return jsonify({"success": True, "result": "img enviada a telegram!"}), 200
+        return "enviada", 200
     except Exception as e:
         # Log the error for debugging purposes
         print(f"Error occurred: {e}")
         # Return an error response with a 500 status code
-        return jsonify({"success": False, "error": str(e)}), 500
+        return str(e), 500
 
 @app.route("/signal/<symbol>", methods=["POST"])
 async def process_signal(symbol):
     try:
         # Directly parse JSON and process data
+        print(symbol)
         json_data = request.get_json()
-        print(json_data)
+        if not json_data:
+            return "error", 400
+        # print(json_data)
+        print("n_json_values:", len(json_data))        
         init_data(json_data, global_state)
         train(global_state)
         results(global_state)
@@ -49,7 +53,19 @@ async def process_signal(symbol):
         # return jsonify({"success": True, "symbol": symbol, "result": entry(global_state)}), 200
     except Exception as e:
         print(f"Error occurred: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        return str(e), 500
+
+@app.route("/json", methods=["POST"])
+async def procjson():
+    try:
+        data = request.get_json()  # Intenta decodificar el JSON automáticamente
+        if not data:
+            return "error", 400
+        print("n_json_values:", len(data))
+        return "OK"
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return str(e), 400
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
