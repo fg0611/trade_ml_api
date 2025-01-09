@@ -40,7 +40,8 @@ async def process_signal(symbol):
         init_data(json_data, global_state)
         train(global_state)
         results(global_state)
-        return jsonify({"success": True, "symbol": symbol, "result": entry(global_state)}), 200
+        return entry(global_state), 200
+        # return jsonify({"success": True, "symbol": symbol, "result": entry(global_state)}), 200
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
